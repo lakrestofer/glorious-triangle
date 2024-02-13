@@ -1,24 +1,28 @@
 const std = @import("std");
+const ray = @import("raylib.zig");
 
-pub fn main() !void {
-    // Prints to stderr (it's a shortcut based on `std.io.getStdErr()`)
-    std.debug.print("All your {s} are belong to us.\n", .{"codebase"});
+fn draw() void {
+    ray.BeginDrawing();
+    defer ray.EndDrawing();
 
-    // stdout is for the actual output of your application, for example if you
-    // are implementing gzip, then only the compressed bytes should be sent to
-    // stdout, not any debugging messages.
-    const stdout_file = std.io.getStdOut().writer();
-    var bw = std.io.bufferedWriter(stdout_file);
-    const stdout = bw.writer();
+    ray.ClearBackground(ray.RAYWHITE);
 
-    try stdout.print("Run `zig build test` to run the tests.\n", .{});
-
-    try bw.flush(); // don't forget to flush!
+    ray.DrawText("Congrats! You created your first window!", 190, 200, 20, ray.LIGHTGRAY);
 }
 
-test "simple test" {
-    var list = std.ArrayList(i32).init(std.testing.allocator);
-    defer list.deinit(); // try commenting this out and see if zig detects the memory leak!
-    try list.append(42);
-    try std.testing.expectEqual(@as(i32, 42), list.pop());
+pub fn main() !void {
+    // Initialization
+    //--------------------------------------------------------------------------------------
+    const screenWidth = 800;
+    const screenHeight = 450;
+
+    ray.InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
+    defer ray.CloseWindow(); // close window and deinit opengl context on exit
+
+    ray.SetTargetFPS(60); // Set our game to run at 60 frames-per-second
+
+    while (!ray.WindowShouldClose()) // Detect window close button or ESC key
+    {
+        draw();
+    }
 }
